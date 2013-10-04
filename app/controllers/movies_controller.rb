@@ -8,13 +8,29 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.ratings
     @sort = params[:sort]
-    
-    if !params[:ratings].nil?
+    if @sort.nil? == false
+      session[:sort] = @sort
+    end
+    puts "just sort"
+    puts session
+    if params[:ratings]
       @checked_boxes = params[:ratings].keys
-      @movies = Movie.where('rating' => @checked_boxes).all
+      diff = @checked_boxes - @all_ratings
+      if diff.length != 0
+        flash.keep
+        puts "diff not empty"
+        puts diff
+      @movies = Movie.where('rating' => session[:ratings]).order(session[:sort]).all
+      else
+      puts @checked_boxes
+      puts "with ratings"
+      session[:ratings] = @checked_boxes
+      puts session
+      @movies = Movie.where('rating' => session[:ratings]).order(session[:sort]).all
+      end
     else
-      @cheked_boxes = @ll_ratings
-      @movies = Movie.order(@sort).all
+      @checked_boxes = session[:ratings]
+      @movies = Movie.where('rating' => session[:ratings]).order(session[:sort]).all
     end
   end
 
