@@ -6,13 +6,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if !params[:ratings].nil?
-      @checked_boxes = params[:ratings].keys
-      puts @checked_boxes
-    end
     @all_ratings = Movie.ratings
     @sort = params[:sort]
-    @movies = Movie.order(@sort).all
+    
+    if !params[:ratings].nil?
+      @checked_boxes = params[:ratings].keys
+      @movies = Movie.where('rating' => @checked_boxes).all
+    else
+      @cheked_boxes = @ll_ratings
+      @movies = Movie.order(@sort).all
+    end
   end
 
   def new
